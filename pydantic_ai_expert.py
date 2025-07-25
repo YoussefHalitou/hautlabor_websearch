@@ -394,13 +394,21 @@ async def web_search(ctx: RunContext[ClinicAIDeps], user_query: str) -> str:
     """
     try:
         client = ctx.deps.openai_client
+        
+        # Use the Responses API with correct tool format
         response = await client.responses.create(
-            model="gpt-4.1-mini",
-            tools=[{"type": "web_search_preview"}],
+            model="gpt-4o-mini",
+            tools=[{
+                "type": "function",  # Change from "Web Search" to "function"
+                "function": {
+                    "name": "Web Search",
+                    "description": "Search the web for current information"
+                }
+            }],
             input=user_query
         )
-
-        # Correctly extract the output text from the response
+        
+        # Rest of your code to extract the response...
         if hasattr(response, "output_text"):
             return response.output_text
         
